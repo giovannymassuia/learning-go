@@ -27,7 +27,7 @@ func main() {
 	// `defer` order is LIFO (Last In First Out), basically a stack
 	println("print 1")
 	defer println("print 2")
-	println("print 3")
-	defer println("print 4")
-	println("print 5")
+	println("print 3-external-file")
+	defer println("print 4-web-server")
+	println("print 5-composing-templates")
 }
