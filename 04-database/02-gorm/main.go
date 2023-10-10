@@ -1,7 +1,6 @@
 package main
 
 import (
-	"fmt"
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
 )
@@ -10,6 +9,7 @@ type Product struct {
 	ID    int `gorm:"primary_key"`
 	Name  string
 	Price float64
+	gorm.Model
 }
 
 func main() {
@@ -57,16 +57,19 @@ func main() {
 	//}
 
 	// Update
-	var product Product
-	db.First(&product, 1)
-	product.Price = 50
-	db.Save(&product)
-
-	var updatedProduct Product
-	db.First(&updatedProduct, 1)
-	fmt.Println(updatedProduct)
+	//var product Product
+	//db.First(&product, 1)
+	//product.Price = 50
+	//db.Save(&product)
+	//
+	//var updatedProduct Product
+	//db.First(&updatedProduct, 1)
+	//fmt.Println(updatedProduct)
 
 	// Delete
-	db.Delete(&product)
+	//db.Delete(&product)
+
+	// Delete with where and soft delete
+	db.Where("price > ?", 10).Delete(&Product{})
 
 }
