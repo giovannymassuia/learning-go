@@ -5,6 +5,5 @@
 
 - **Public**: Capitalized
 - **Private**: Lowercase
-- **Exported**: Capitalized and commented
-- **Unexported**: Lowercase and commented
-- **Package**: Lowercase and commented
+- **Exported**: Capitalized
+- **Unexported**: Lowercase
