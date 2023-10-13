@@ -22,3 +22,11 @@
 
 ### Run benchmarks with memory allocations and CPU profiling
 `go test -bench=. -benchmem -cpuprofile=cpu.out ./...`
+
+# Fuzzing Tests
+
+### Run fuzzing tests
+`go test -fuzz=. ./...`
+
+### Run fuzzing tests with count
+`go test -fuzz=. -count=10 ./...`

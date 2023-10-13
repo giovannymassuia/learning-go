@@ -45,3 +45,16 @@ func BenchmarkCalculateTaxWithSleep(b *testing.B) {
 		CalculateTaxWithSleep(500.0)
 	}
 }
+
+func FuzzCalculateTax(f *testing.F) {
+	seed := []float64{500.0, 1000.0, 1500.0}
+	for _, v := range seed {
+		f.Add(v)
+	}
+	f.Fuzz(func(t *testing.T, amount float64) {
+		result := CalculateTax(amount)
+		if amount <= 0 && result != 0 {
+			t.Errorf("CalculateTax(%f): expected %f, got %f", amount, 0.0, result)
+		}
+	})
+}
