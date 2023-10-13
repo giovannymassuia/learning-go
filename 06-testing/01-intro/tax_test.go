@@ -1,6 +1,8 @@
 package tax
 
-import "testing"
+import (
+	"testing"
+)
 
 func TestCalculateTax(t *testing.T) {
 	amount := 500.0
@@ -29,5 +31,17 @@ func TestCalculateTaxBatch(t *testing.T) {
 		if result != tt.expected {
 			t.Errorf("CalculateTax(%f): expected %f, got %f", tt.amount, tt.expected, result)
 		}
+	}
+}
+
+func BenchmarkCalculateTax(b *testing.B) {
+	for i := 0; i < b.N; i++ {
+		CalculateTax(500.0)
+	}
+}
+
+func BenchmarkCalculateTaxWithSleep(b *testing.B) {
+	for i := 0; i < b.N; i++ {
+		CalculateTaxWithSleep(500.0)
 	}
 }
