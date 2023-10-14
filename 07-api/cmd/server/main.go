@@ -37,9 +37,10 @@ func main() {
 	r.Delete("/products/{id}", productHandler.DeleteProduct)
 
 	userDB := database.NewUser(db)
-	userHandler := handlers.NewUserHandler(userDB)
+	userHandler := handlers.NewUserHandler(userDB, config.TokenAuth, config.JWTExpiresIn)
 
 	r.Post("/users", userHandler.CreateUser)
+	r.Post("/users/jwt", userHandler.GetJwt)
 
 	http.ListenAndServe(":"+config.WebServerPort, r)
 }
