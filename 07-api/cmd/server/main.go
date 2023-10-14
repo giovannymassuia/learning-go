@@ -24,16 +24,22 @@ func main() {
 	}
 	db.AutoMigrate(&entity.Product{}, &entity.User{})
 
+	r := chi.NewRouter()
+	r.Use(middleware.Logger)
+
 	productDB := database.NewProduct(db)
 	productHandler := handlers.NewProductHandler(productDB)
 
-	r := chi.NewRouter()
-	r.Use(middleware.Logger)
 	r.Post("/products", productHandler.CreateProduct)
 	r.Get("/products/{id}", productHandler.GetProduct)
 	r.Get("/products", productHandler.GetProducts)
 	r.Put("/products/{id}", productHandler.UpdateProduct)
 	r.Delete("/products/{id}", productHandler.DeleteProduct)
+
+	userDB := database.NewUser(db)
+	userHandler := handlers.NewUserHandler(userDB)
+
+	r.Post("/users", userHandler.CreateUser)
 
 	http.ListenAndServe(":"+config.WebServerPort, r)
 }
