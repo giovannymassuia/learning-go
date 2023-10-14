@@ -1,9 +1,23 @@
+GET http://localhost:8000/products/868285d6-bec0-4fca-ab70-7c05cf6bcceb
+Accept: application/json
+
+###
 POST http://localhost:8000/products
 Content-Type: application/json
 
 {
   "name": "Product 1",
   "price": 100
+}
+
+###
+
+PUT http://localhost:8000/products/868285d6-bec0-4fca-ab70-7c05cf6bcceb
+Content-Type: application/json
+
+{
+  "name": "Product 1 Updated",
+  "price": 101
 }
 
 ###
