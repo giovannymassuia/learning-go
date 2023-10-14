@@ -10,6 +10,7 @@ import (
 	"github.com/go-chi/jwtauth"
 	"gorm.io/driver/sqlite"
 	"gorm.io/gorm"
+	"log"
 	"net/http"
 )
 
@@ -26,7 +27,12 @@ func main() {
 	db.AutoMigrate(&entity.Product{}, &entity.User{})
 
 	r := chi.NewRouter()
-	r.Use(middleware.Logger)
+	//r.Use(middleware.Logger)
+	r.Use(middleware.Recoverer)
+	r.Use(middleware.WithValue("jwt", config.TokenAuth))
+	r.Use(LogRequest)
+
+	//r.Use(LogResponse)
 
 	productDB := database.NewProduct(db)
 	productHandler := handlers.NewProductHandler(productDB)
@@ -43,10 +49,25 @@ func main() {
 	})
 
 	userDB := database.NewUser(db)
-	userHandler := handlers.NewUserHandler(userDB, config.TokenAuth, config.JWTExpiresIn)
+	userHandler := handlers.NewUserHandler(userDB, config.JWTExpiresIn)
 
 	r.Post("/users", userHandler.CreateUser)
 	r.Post("/users/jwt", userHandler.GetJwt)
 
 	http.ListenAndServe(":"+config.WebServerPort, r)
+}
+
+func LogRequest(next http.Handler) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		log.Printf("My middleware ->> Request: %s %s", r.Method, r.URL.Path)
+		next.ServeHTTP(w, r)
+	})
+}
+
+func LogResponse(next http.Handler) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		log.Printf("My middleware ->> Response: %s %s", r.Method, r.URL.Path)
+		log.Printf("My middleware ->> Response: %s", w.Header().Get("Content-Type"))
+		next.ServeHTTP(w, r)
+	})
 }

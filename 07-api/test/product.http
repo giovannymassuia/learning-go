@@ -4,7 +4,7 @@ Accept: application/json
 ###
 GET http://localhost:8000/products?page=1&limit=10&sort=asc
 Accept: application/json
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE2OTczMDM5MzIsInN1YiI6IjY2YmJkMGM0LTVjOGYtNDYyOC04MzYxLWM3NmMxNjE5ZDIwNiJ9.LlQOQx27RKq5QcB75xZazAc-juvs-a0hNnzZ1mIzhSw
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE2OTczMDQ4MzcsInN1YiI6IjY2YmJkMGM0LTVjOGYtNDYyOC04MzYxLWM3NmMxNjE5ZDIwNiJ9.7kaSwhOkhIF8fGEoPnbxTAKQ8B4BtLVcZGm2Qk5kJ3A
 
 ###
 POST http://localhost:8000/products
