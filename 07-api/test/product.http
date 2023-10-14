@@ -4,6 +4,7 @@ Accept: application/json
 ###
 GET http://localhost:8000/products?page=1&limit=10&sort=asc
 Accept: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE2OTczMDM5MzIsInN1YiI6IjY2YmJkMGM0LTVjOGYtNDYyOC04MzYxLWM3NmMxNjE5ZDIwNiJ9.LlQOQx27RKq5QcB75xZazAc-juvs-a0hNnzZ1mIzhSw
 
 ###
 POST http://localhost:8000/products

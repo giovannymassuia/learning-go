@@ -7,6 +7,7 @@ import (
 	"github.com/giovannymassuia/learning-go/07-api/internal/infra/handlers"
 	"github.com/go-chi/chi"
 	"github.com/go-chi/chi/middleware"
+	"github.com/go-chi/jwtauth"
 	"gorm.io/driver/sqlite"
 	"gorm.io/gorm"
 	"net/http"
@@ -30,11 +31,16 @@ func main() {
 	productDB := database.NewProduct(db)
 	productHandler := handlers.NewProductHandler(productDB)
 
-	r.Post("/products", productHandler.CreateProduct)
-	r.Get("/products/{id}", productHandler.GetProduct)
-	r.Get("/products", productHandler.GetProducts)
-	r.Put("/products/{id}", productHandler.UpdateProduct)
-	r.Delete("/products/{id}", productHandler.DeleteProduct)
+	r.Route("/products", func(r chi.Router) {
+		r.Use(jwtauth.Verifier(config.TokenAuth))
+		r.Use(jwtauth.Authenticator)
+
+		r.Get("/", productHandler.GetProducts)
+		r.Get("/{id}", productHandler.GetProduct)
+		r.Post("/", productHandler.CreateProduct)
+		r.Put("/{id}", productHandler.UpdateProduct)
+		r.Delete("/{id}", productHandler.DeleteProduct)
+	})
 
 	userDB := database.NewUser(db)
 	userHandler := handlers.NewUserHandler(userDB, config.TokenAuth, config.JWTExpiresIn)
