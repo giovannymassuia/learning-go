@@ -108,3 +108,16 @@
 - Cost of OS threads vs Go routines
   - OS threads: ~1mb
   - Go routines: ~2kb
+
+### Wait Groups
+
+- Wait groups are used to wait for a collection of go routines to finish.
+
+- Parts
+  - Wait group
+    - A wait group waits for a collection of go routines to finish.
+  - Add
+    - Add adds delta, which may be negative, to the wait group counter.
+    - If the counter becomes zero, all go routines blocked on Wait are released.
+  - Done
+    - Done decrements the wait group counter.
