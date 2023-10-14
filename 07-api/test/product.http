@@ -2,6 +2,10 @@ GET http://localhost:8000/products/868285d6-bec0-4fca-ab70-7c05cf6bcceb
 Accept: application/json
 
 ###
+GET http://localhost:8000/products?page=1&limit=10&sort=asc
+Accept: application/json
+
+###
 POST http://localhost:8000/products
 Content-Type: application/json
 
@@ -21,3 +25,5 @@ Content-Type: application/json
 }
 
 ###
+
+DELETE http://localhost:8000/products/868285d6-bec0-4fca-ab70-7c05cf6bcceb
