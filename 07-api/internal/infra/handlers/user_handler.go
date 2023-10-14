@@ -10,6 +10,10 @@ import (
 	"time"
 )
 
+type Error struct {
+	Message string `json:"message"`
+}
+
 type UserHandler struct {
 	UserDB       database.UserInterface
 	JwtExpiresIn int
@@ -19,6 +23,17 @@ func NewUserHandler(userDB database.UserInterface, jwtExpiresIn int) *UserHandle
 	return &UserHandler{UserDB: userDB, JwtExpiresIn: jwtExpiresIn}
 }
 
+// GetJwt godoc
+// @Summary		Get JWT token
+// @Description	Get JWT token
+// @Tags 		users
+// @Accept		json
+// @Produce 	json
+// @Param 		request 	body 		dto.GetJwtInput 	true 	"user credentials"
+// @Success 	200 		{object} 	dto.GetJwtOutput
+// @Failure 	400 		{object} 	Error
+// @Failure 	500 		{object} 	Error
+// @Router		/users/jwt 	[post]
 func (h *UserHandler) GetJwt(w http.ResponseWriter, r *http.Request) {
 	jwt := r.Context().Value("jwt").(*jwtauth.JWTAuth)
 
@@ -30,7 +45,9 @@ func (h *UserHandler) GetJwt(w http.ResponseWriter, r *http.Request) {
 	}
 	u, err := h.UserDB.FindByEmail(user.Email)
 	if err != nil {
-		w.WriteHeader(http.StatusUnauthorized)
+		w.WriteHeader(http.StatusNotFound)
+		e := Error{Message: "user not found"}
+		json.NewEncoder(w).Encode(e)
 		return
 	}
 	if !u.ValidatePassword(user.Password) {
@@ -43,18 +60,22 @@ func (h *UserHandler) GetJwt(w http.ResponseWriter, r *http.Request) {
 		"sub": u.ID.String(),
 		"exp": time.Now().Add(time.Second * time.Duration(h.JwtExpiresIn)).Unix(),
 	})
-	accessToken :=
-		struct {
-			AccessToken string `json:"access_token"`
-		}{
-			AccessToken: tokenString,
-		}
-
+	accessToken := dto.GetJwtOutput{AccessToken: tokenString}
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusOK)
 	json.NewEncoder(w).Encode(accessToken)
 }
 
+// CreateUser godoc
+// @Summary		Create a new user
+// @Description	Create a new user
+// @Tags 		users
+// @Accept		json
+// @Produce 	json
+// @Param 		request 	body 		dto.CreateUserInput 	true 	"user request"
+// @Success 	201
+// @Failure 	500 		{object} 	Error
+// @Router		/users 		[post]
 func (h *UserHandler) CreateUser(w http.ResponseWriter, r *http.Request) {
 	var user dto.CreateUserInput
 	err := json.NewDecoder(r.Body).Decode(&user)
@@ -65,11 +86,15 @@ func (h *UserHandler) CreateUser(w http.ResponseWriter, r *http.Request) {
 	_, err = h.UserDB.FindByEmail(user.Email)
 	if err == nil {
 		w.WriteHeader(http.StatusConflict)
+		e := Error{Message: "email already exists"}
+		json.NewEncoder(w).Encode(e)
 		return
 	}
 	u, err := entity.NewUser(user.Name, user.Email, user.Password)
 	if err != nil {
 		w.WriteHeader(http.StatusBadRequest)
+		e := Error{Message: err.Error()}
+		json.NewEncoder(w).Encode(e)
 		return
 	}
 	err = h.UserDB.Create(u)

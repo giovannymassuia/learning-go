@@ -12,8 +12,27 @@ import (
 	"gorm.io/gorm"
 	"log"
 	"net/http"
+
+	_ "github.com/giovannymassuia/learning-go/07-api/docs"
+	httpSwagger "github.com/swaggo/http-swagger"
 )
 
+// @title Swagger Example API
+// @version v1
+// @description This is a sample server Petstore server.
+// @TermsOfService http://swagger.io/terms/
+
+// @contact.name Giovanny
+// @contact.url giovannymassuia.io
+
+// @license.name MIT
+// @license.url http://opensource.org/licenses/MIT
+
+// @host localhost:8000
+// @BasePath /
+// @securityDefinitions.apiKey ApiKeyAuth
+// @in header
+// @name Authorization
 func main() {
 	config, err := configs.LoadConfig(".")
 	if err != nil {
@@ -53,6 +72,8 @@ func main() {
 
 	r.Post("/users", userHandler.CreateUser)
 	r.Post("/users/jwt", userHandler.GetJwt)
+
+	r.Get("/docs/*", httpSwagger.Handler(httpSwagger.URL("http://localhost:8000/docs/doc.json")))
 
 	http.ListenAndServe(":"+config.WebServerPort, r)
 }

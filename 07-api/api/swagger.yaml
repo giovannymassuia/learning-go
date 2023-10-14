@@ -1,0 +1,290 @@
+basePath: /
+definitions:
+  dto.CreateProductInput:
+    properties:
+      name:
+        type: string
+      price:
+        type: number
+    type: object
+  dto.CreateUserInput:
+    properties:
+      email:
+        type: string
+      name:
+        type: string
+      password:
+        type: string
+    type: object
+  dto.GetJwtInput:
+    properties:
+      email:
+        type: string
+      password:
+        type: string
+    type: object
+  dto.GetJwtOutput:
+    properties:
+      access_token:
+        type: string
+    type: object
+  entity.Product:
+    properties:
+      created_at:
+        type: string
+      id:
+        type: string
+      name:
+        type: string
+      price:
+        type: number
+    type: object
+  handlers.Error:
+    properties:
+      message:
+        type: string
+    type: object
+host: localhost:8000
+info:
+  contact:
+    name: Giovanny
+    url: giovannymassuia.io
+  description: This is a sample server Petstore server.
+  license:
+    name: MIT
+    url: http://opensource.org/licenses/MIT
+  termsOfService: http://swagger.io/terms/
+  title: Swagger Example API
+  version: v1
+paths:
+  /products:
+    get:
+      consumes:
+      - application/json
+      description: Get products
+      parameters:
+      - description: page number
+        in: query
+        name: page
+        type: string
+      - description: limit
+        in: query
+        name: limit
+        type: string
+      - description: sort
+        in: query
+        name: sort
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/entity.Product'
+            type: array
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/handlers.Error'
+      security:
+      - ApiKeyAuth: []
+      summary: Get products
+      tags:
+      - products
+    post:
+      consumes:
+      - application/json
+      description: Create a product
+      parameters:
+      - description: product
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/dto.CreateProductInput'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            type: string
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/handlers.Error'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/handlers.Error'
+      security:
+      - ApiKeyAuth: []
+      summary: Create a product
+      tags:
+      - products
+  /products/{id}:
+    delete:
+      consumes:
+      - application/json
+      description: Delete a product
+      parameters:
+      - description: product id
+        format: uuid
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/handlers.Error'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/handlers.Error'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/handlers.Error'
+      security:
+      - ApiKeyAuth: []
+      summary: Delete a product
+      tags:
+      - products
+    get:
+      consumes:
+      - application/json
+      description: Get a product
+      parameters:
+      - description: product id
+        format: uuid
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/entity.Product'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/handlers.Error'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/handlers.Error'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/handlers.Error'
+      summary: Get a product
+      tags:
+      - products
+    put:
+      consumes:
+      - application/json
+      description: Update a product
+      parameters:
+      - description: product id
+        format: uuid
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: product
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/dto.CreateProductInput'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/handlers.Error'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/handlers.Error'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/handlers.Error'
+      summary: Update a product
+      tags:
+      - products
+  /users:
+    post:
+      consumes:
+      - application/json
+      description: Create a new user
+      parameters:
+      - description: user request
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/dto.CreateUserInput'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/handlers.Error'
+      summary: Create a new user
+      tags:
+      - users
+  /users/jwt:
+    post:
+      consumes:
+      - application/json
+      description: Get JWT token
+      parameters:
+      - description: user credentials
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/dto.GetJwtInput'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/dto.GetJwtOutput'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/handlers.Error'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/handlers.Error'
+      summary: Get JWT token
+      tags:
+      - users
+securityDefinitions:
+  ApiKeyAuth:
+    in: header
+    name: Authorization
+    type: apiKey
+swagger: "2.0"
