@@ -3,6 +3,7 @@
   <component name="SqlDialectMappings">
     <file url="file://$PROJECT_DIR$/04-database/01-intro/main.go" dialect="GenericSQL" />
     <file url="file://$PROJECT_DIR$/04-database/schema.sql" dialect="MySQL" />
+    <file url="file://$PROJECT_DIR$/11-graphql/configs/database/init.sql" dialect="SQLite" />
     <file url="PROJECT" dialect="MySQL" />
   </component>
 </project>
