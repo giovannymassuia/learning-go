@@ -9,6 +9,7 @@ type Course {
   id: ID!
   name: String!
   description: String
+  categoryID: ID!
   category: Category!
 }
 
