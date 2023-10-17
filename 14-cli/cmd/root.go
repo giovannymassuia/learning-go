@@ -1,10 +1,27 @@
 package cmd
 
 import (
+	"14-cli/internal/database"
+	"database/sql"
 	"os"
 
+	_ "github.com/mattn/go-sqlite3"
 	"github.com/spf13/cobra"
 )
+
+type RunEFunc func(cmd *cobra.Command, args []string) error
+
+func getDB() *sql.DB {
+	db, err := sql.Open("sqlite3", "./db.sqlite")
+	if err != nil {
+		panic(err)
+	}
+	return db
+}
+
+func getCategoryDB(db *sql.DB) database.Category {
+	return *database.NewCategory(db)
+}
 
 // rootCmd represents the base command when called without any subcommands
 var rootCmd = &cobra.Command{
