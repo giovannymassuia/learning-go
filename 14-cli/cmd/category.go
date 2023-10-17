@@ -4,6 +4,7 @@ Copyright © 2023 NAME HERE <EMAIL ADDRESS>
 package cmd
 
 import (
+	"fmt"
 	"github.com/spf13/cobra"
 )
 
@@ -18,12 +19,30 @@ Cobra is a CLI library for Go that empowers applications.
 This application is a tool to generate the needed files
 to quickly create a Cobra application.`,
 	Run: func(cmd *cobra.Command, args []string) {
-		cmd.Help()
+
+		name, _ := cmd.Flags().GetString("name")
+		fmt.Printf("category called with name: %s\n", name)
+
+	},
+
+	// PreRun and PostRun are called before and after the Run function
+	PreRun: func(cmd *cobra.Command, args []string) {
+		fmt.Println("pre run: category called")
+	},
+	PostRun: func(cmd *cobra.Command, args []string) {
+		fmt.Println("post run: category called")
+	},
+
+	// RunE is called when an error occurs
+	RunE: func(cmd *cobra.Command, args []string) error {
+		return fmt.Errorf("run error: category called")
 	},
 }
 
 func init() {
 	rootCmd.AddCommand(categoryCmd)
+
+	categoryCmd.PersistentFlags().StringP("name", "n", "", "Category name")
 
 	// Here you will define your flags and configuration settings.
 
