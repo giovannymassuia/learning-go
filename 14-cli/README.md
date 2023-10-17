@@ -25,6 +25,8 @@ Docs:
 
 - Create a new Cobra command:
   - `cobra-cli add <command-name>`
+- Create a new Cobra as a child of another command:
+  - `cobra-cli add <command-name> -p <parent-command-name>`
 
 - Build the Cobra project:
   - `go build -o cobra-cli main.go`
