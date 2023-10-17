@@ -39,6 +39,11 @@ func main() {
 	}
 	defer dir.Close()
 
+	// create a channel with a buffer of 100
+	// this channel will be used to control the number of goroutines
+	// that are uploading files to S3
+	uploadControl := make(chan struct{}, 100)
+
 	for {
 		files, err := dir.Readdir(1)
 		if err != nil {
@@ -50,19 +55,25 @@ func main() {
 		}
 
 		wg.Add(1)
-		go uploadFile(files[0].Name())
+
+		// this line will block the execution of the for loop
+		// until there is a free slot in the channel
+		uploadControl <- struct{}{}
+
+		go uploadFile(files[0].Name(), uploadControl)
 	}
 
 	wg.Wait()
 }
 
-func uploadFile(filename string) {
+func uploadFile(filename string, uploadControl <-chan struct{}) {
 	defer wg.Done()
 
 	completeFileName := fmt.Sprintf("./tmp/%s", filename)
 	f, err := os.Open(completeFileName)
 	if err != nil {
 		fmt.Printf("Error opening file %s: %s\n", completeFileName, err.Error())
+		<-uploadControl // release a slot in the channel
 		return
 	}
 	defer f.Close()
@@ -75,8 +86,10 @@ func uploadFile(filename string) {
 	})
 	if err != nil {
 		fmt.Printf("Error uploading file %s: %s\n", completeFileName, err.Error())
+		<-uploadControl // release a slot in the channel
 		return
 	}
 
 	fmt.Printf("File %s uploaded successfully\n", completeFileName)
+	<-uploadControl // release a slot in the channel
 }
