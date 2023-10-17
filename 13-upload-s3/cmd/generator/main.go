@@ -6,7 +6,7 @@ import (
 )
 
 func main() {
-	i := 0
+	i := 1
 	for {
 		f, err := os.Create(fmt.Sprintf("./tmp/file-%d.txt", i))
 		if err != nil {
@@ -16,7 +16,7 @@ func main() {
 		f.WriteString("Hello World")
 		i++
 
-		if i == 50 {
+		if i > 200 {
 			break
 		}
 	}
