@@ -5,6 +5,7 @@ import (
 	"12-grpc/internal/pb"
 	"context"
 	"io"
+	"time"
 )
 
 type CategoryService struct {
@@ -109,4 +110,29 @@ func (c *CategoryService) CreateCategoryBiDirectional(stream pb.CategoryService_
 			},
 		})
 	}
+}
+
+func (c *CategoryService) ListCategoriesStream(req *pb.Void, stream pb.CategoryService_ListCategoriesStreamServer) error {
+	categories, err := c.CategoryDB.FindAll()
+	if err != nil {
+		return err
+	}
+
+	for _, category := range categories {
+
+		// sleep for 1 second
+		time.Sleep(1 * time.Second)
+
+		err = stream.Send(&pb.CategoryResponse{
+			Category: &pb.Category{
+				Id:          category.ID,
+				Name:        category.Name,
+				Description: category.Description,
+			},
+		})
+		if err != nil {
+			return err
+		}
+	}
+	return nil
 }
