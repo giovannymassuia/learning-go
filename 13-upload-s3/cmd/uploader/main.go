@@ -44,6 +44,23 @@ func main() {
 	// that are uploading files to S3
 	uploadControl := make(chan struct{}, 100)
 
+	// create a channel to receive the name of the files that failed to upload
+	// the buffer of 10, means that this channel can receive up to 10 filenames
+	errorFileUpload := make(chan string, 10)
+
+	// create a goroutine to receive the name of the files that failed to upload
+	// and retry to upload
+	go func() {
+		for {
+			select {
+			case filename := <-errorFileUpload:
+				uploadControl <- struct{}{}
+				wg.Add(1)
+				go uploadFile(filename, uploadControl, errorFileUpload)
+			}
+		}
+	}()
+
 	for {
 		files, err := dir.Readdir(1)
 		if err != nil {
@@ -60,20 +77,21 @@ func main() {
 		// until there is a free slot in the channel
 		uploadControl <- struct{}{}
 
-		go uploadFile(files[0].Name(), uploadControl)
+		go uploadFile(files[0].Name(), uploadControl, errorFileUpload)
 	}
 
 	wg.Wait()
 }
 
-func uploadFile(filename string, uploadControl <-chan struct{}) {
+func uploadFile(filename string, uploadControl <-chan struct{}, errorFileUpload chan<- string) {
 	defer wg.Done()
 
 	completeFileName := fmt.Sprintf("./tmp/%s", filename)
 	f, err := os.Open(completeFileName)
 	if err != nil {
 		fmt.Printf("Error opening file %s: %s\n", completeFileName, err.Error())
-		<-uploadControl // release a slot in the channel
+		<-uploadControl             // release a slot in the channel
+		errorFileUpload <- filename // send the name of the file that failed to upload to the channel
 		return
 	}
 	defer f.Close()
@@ -86,7 +104,8 @@ func uploadFile(filename string, uploadControl <-chan struct{}) {
 	})
 	if err != nil {
 		fmt.Printf("Error uploading file %s: %s\n", completeFileName, err.Error())
-		<-uploadControl // release a slot in the channel
+		<-uploadControl             // release a slot in the channel
+		errorFileUpload <- filename // send the name of the file that failed to upload to the channel
 		return
 	}
 
