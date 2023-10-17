@@ -22,5 +22,12 @@
       <jdbc-url>jdbc:sqlite:$PROJECT_DIR$/11-graphql/database.db</jdbc-url>
       <working-dir>$ProjectFileDir$</working-dir>
     </data-source>
+    <data-source source="LOCAL" name="grpc-go" uuid="8ab8c3d7-6451-449f-9d0e-0e7c8250d30f">
+      <driver-ref>sqlite.xerial</driver-ref>
+      <synchronize>true</synchronize>
+      <jdbc-driver>org.sqlite.JDBC</jdbc-driver>
+      <jdbc-url>jdbc:sqlite:$PROJECT_DIR$/12-grpc/db.sqlite</jdbc-url>
+      <working-dir>$ProjectFileDir$</working-dir>
+    </data-source>
   </component>
 </project>
