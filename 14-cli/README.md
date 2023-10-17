@@ -32,4 +32,14 @@ Docs:
   - `go build -o cobra-cli main.go`
 
 - Build the Cobra project with custom name:
-  - `go build -o <custom-name> main.go`
+  - `go build -o <custom-name> maiin.go`
+
+### Cobra Flags
+
+- Cobra flags are used to pass data to a command.
+
+- Cobra flags can be defined as:
+  - Persistent flags
+    - Persistent flags are global flags that are available to all commands from the specified command down.
+  - Local flags
+    - Local flags are flags that are only available to a specific command.
