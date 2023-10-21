@@ -33,7 +33,7 @@ type CreateCourseParams struct {
 	ID          string
 	Name        string
 	Description sql.NullString
-	Price       string
+	Price       float64
 	CategoryID  string
 }
 

@@ -23,6 +23,7 @@ func NewCourseDB(dbConn *sql.DB) *CourseDB {
 type CourseParams struct {
 	ID          string
 	Name        string
+	Price       float64
 	Description sql.NullString
 }
 
@@ -48,7 +49,7 @@ func (c *CourseDB) callTx(ctx context.Context, fn func(*db.Queries) error) error
 	return tx.Commit()
 }
 
-func (c *CourseDB) CreateCrouseAndCategory(ctx context.Context, argsCategory CategoryParams, argsCourse CourseParams) error {
+func (c *CourseDB) CreateCourseAndCategory(ctx context.Context, argsCategory CategoryParams, argsCourse CourseParams) error {
 	err := c.callTx(ctx, func(q *db.Queries) error {
 		var err error
 		err = q.CreateCategory(ctx, db.CreateCategoryParams{
@@ -63,6 +64,8 @@ func (c *CourseDB) CreateCrouseAndCategory(ctx context.Context, argsCategory Cat
 			ID:          argsCourse.ID,
 			Name:        argsCourse.Name,
 			Description: argsCourse.Description,
+			Price:       argsCourse.Price,
+			CategoryID:  argsCategory.ID,
 		})
 		if err != nil {
 			return err
@@ -85,6 +88,7 @@ func main() {
 	courseArgs := CourseParams{
 		ID:          "course-1",
 		Name:        "Course 1",
+		Price:       100.00,
 		Description: sql.NullString{String: "Course 1 Description", Valid: true},
 	}
 	categoryArgs := CategoryParams{
@@ -94,7 +98,7 @@ func main() {
 	}
 
 	courseDB := NewCourseDB(dbConn)
-	err = courseDB.CreateCrouseAndCategory(ctx, categoryArgs, courseArgs)
+	err = courseDB.CreateCourseAndCategory(ctx, categoryArgs, courseArgs)
 	if err != nil {
 		panic(err)
 	}
