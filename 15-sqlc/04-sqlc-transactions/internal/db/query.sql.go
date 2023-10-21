@@ -95,6 +95,49 @@ func (q *Queries) ListCategories(ctx context.Context) ([]Category, error) {
 	return items, nil
 }
 
+const listCourses = `-- name: ListCourses :many
+select c.id, c.category_id, c.name, c.description, c.price, ca.name as category_name from courses c join categories ca on c.category_id = ca.id
+`
+
+type ListCoursesRow struct {
+	ID           string
+	CategoryID   string
+	Name         string
+	Description  sql.NullString
+	Price        float64
+	CategoryName string
+}
+
+func (q *Queries) ListCourses(ctx context.Context) ([]ListCoursesRow, error) {
+	rows, err := q.db.QueryContext(ctx, listCourses)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	var items []ListCoursesRow
+	for rows.Next() {
+		var i ListCoursesRow
+		if err := rows.Scan(
+			&i.ID,
+			&i.CategoryID,
+			&i.Name,
+			&i.Description,
+			&i.Price,
+			&i.CategoryName,
+		); err != nil {
+			return nil, err
+		}
+		items = append(items, i)
+	}
+	if err := rows.Close(); err != nil {
+		return nil, err
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
+}
+
 const updateCategory = `-- name: UpdateCategory :exec
 update categories set name = ?, description = ? where id = ?
 `
