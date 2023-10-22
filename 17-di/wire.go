@@ -9,7 +9,15 @@ import (
 	"github.com/google/wire"
 )
 
+var setRepositoryDependency = wire.NewSet(
+	product.NewRepository,
+	wire.Bind(new(product.RepositoryInterface), new(*product.Repository)),
+)
+
 func NewUseCase(db *sql.DB) *product.UseCase {
-	wire.Build(product.NewUseCase, product.NewRepository)
+	wire.Build(
+		setRepositoryDependency,
+		product.NewUseCase,
+	)
 	return &product.UseCase{}
 }
