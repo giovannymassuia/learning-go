@@ -1,7 +1,6 @@
 package main
 
 import (
-	"17-di/product"
 	"database/sql"
 
 	_ "github.com/mattn/go-sqlite3"
@@ -13,9 +12,7 @@ func main() {
 		panic(err)
 	}
 
-	repository := product.NewRepository(db)
-
-	useCase := product.NewUseCase(repository)
+	useCase := NewUseCase(db)
 
 	getProduct, err := useCase.GetProduct(1)
 	if err != nil {

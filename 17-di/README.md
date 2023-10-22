@@ -22,3 +22,16 @@ Method injection is when a dependency is injected into a class via a method. The
 
 ---
 
+### Dependency Injection in Go with libraries
+
+- [Wire](https://github.com/google/wire)
+- [Dig](https://github.com/uber-go/dig)
+- [Fx](https://github.com/uber-go/fx)
+
+#### Working with Googles Wire
+
+- Install
+    - `go install github.com/google/wire/cmd/wire@latest`
+- Create a `wire.go` file in the root of your project
+- Generate Wire code
+    - `wire`
